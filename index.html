@@ -11,7 +11,11 @@
 </head>
 
 <body>
-	<div id="idyll-mount"><div data-reactroot=""><div class="idyll-root"><div style="max-width:600px;margin:0 0 0 50px" class=" idyll-text-container"><h1>Commuting Habits in Cook County</h1><p>Mobility and transportation is an issue that impacts almost everyone, yet is not present in the public consciousness. Access to transportation is essential in order to maintain a job, sustain a social life, and fulfill basic human needs. In urban areas like Cook County, the issue of mobility becomes more complex when accounting for the high density of people that need to travel over large geographic areas. Most individuals move around using either cars or public transit. Owning a car can be cost prohibitive, especially in an area as expensive as Cook County. One of the best ways to ensure that all people can easily move throughout Chicagoland is by supporting and funding public transit systems. </p><p>Compared to the rest of the United States, Cook county has a very extensive public transit network, yet there is still great room for improvement. In particular, existing inequities regarding race and class can intersect and impact an individual’s access to affordable and efficient transportation. We can examine the areas that are best served by public transit, and those that are least served--while taking into account the demographics of these areas. </p>
+	<div id="idyll-mount"><div data-reactroot=""><div class="idyll-root"><div style="max-width:600px;margin:0 0 0 50px" class=" idyll-text-container"><h1>Commuting Habits in Cook County</h1><p>Mobility and transportation is an issue that impacts almost everyone, yet is not present in the public consciousness. Access to transportation is essential in order to maintain a job, sustain a social life, and fulfill basic human needs. In urban areas like Cook County, the issue of mobility becomes more complex when accounting for the high density of people that need to travel over large geographic areas. Most individuals move around using either cars or public transit. Owning a car can be cost prohibitive, especially in an area as expensive as Cook County. One of the best ways to ensure that all people can easily move throughout Chicagoland is by supporting and funding public transit systems. </p>
+	<p>Compared to the rest of the United States, Cook county has a very extensive public transit network, yet there is still great room for improvement. In particular, existing inequities regarding race and class can intersect and impact an individual’s access to affordable and efficient transportation. We can examine the areas that are best served by public transit, and those that are least served--while taking into account the demographics of these areas. </p>
+	<p>Select different tracts below to view more details!</p>
+
+  <h2> Census Tracts Characterized by Public Transit</h2>
   <div id="scatterPlot"></div>
 
   <script>
@@ -75,20 +79,57 @@
 							        	.duration('70')
 							        	.attr("r", 3);})
 		    	.on("click", function(d, i) {individualTract(d)})
-		  //add axis labels
-		  svg.append("text")             
+		//add axis labels
+		svg.append("text")             
 		      .attr("transform",
 		            "translate(" + (width/2) + " ," + 
 		                           (height + margin.top + 20) + ")")
 		      .style("text-anchor", "middle")
 		      .text("Mean Travel Time on Transit");
-		  svg.append("text")
-		      .attr("transform", "rotate(-90)")
-		      .attr("y", 0 - margin.left)
-		      .attr("x",0 - (height / 2))
-		      .attr("dy", "1em")
-		      .style("text-anchor", "middle")
-		      .text("Percent of People Taking Transit"); 
+		svg.append("text")
+		    .attr("transform", "rotate(-90)")
+		    .attr("y", 0 - margin.left)
+		    .attr("x",0 - (height / 2))
+		    .attr("dy", "1em")
+		    .style("text-anchor", "middle")
+		    .text("Percent of People Taking Transit"); 
+
+		//scatter plot legend
+		//legend
+	    var domain = color.domain()[1]
+	    var legendIntervals = [0, domain*.2, domain*.4, domain*.6, domain*.8, domain]
+	    var extent = d3.extent(legendIntervals, d => d);
+
+	      var defs = svg.append("defs");
+	      var linearGradient = defs.append("linearGradient").attr("id", "myGradient");
+	      linearGradient.selectAll("stop")
+	          .data(legendIntervals)
+	        .enter().append("stop")
+	          .attr("offset", d => ((d - extent[0]) / (extent[1] - extent[0]) * 100) + "%")
+	          .attr("stop-color", d => color(d));
+
+	      d3.select("g").append("rect")
+	          .attr("width", 200)
+	          .attr("height", 25)
+	          .attr("x", 300)
+	          .attr("y", 25)
+	          .style("fill", "url(#myGradient)");
+
+	      d3.select("g").append("text")
+	          .attr("id", "labelLow")
+	          .attr("x", 250)
+	          .attr("y", 75)
+	          .text('$4,345');
+	      d3.select("g").append("text")
+	          .attr("id","labelHigh")
+	          .attr("x", 450)
+	          .attr("y", 75)
+	          .text("$157,500");
+	     d3.select("g").append("text")
+	          .attr("id","labelHigh")
+	          .attr("x", 330)
+	          .attr("y", 5)
+	          .text("Median Income");
 	})
 
 
