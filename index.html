@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Cook County Transit</title>
+  <meta charset="utf-8">
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+<!--    <link rel="stylesheet" type="text/css" href="languagesMap.css"> -->
+</head>
+
+<body>
+  <div id="scatterPlot"></div>
+
+  <script>
+  	console.log("scatterplot")
+  	// set the dimensions and margins of the graph
+	var margin = {top: 10, right: 30, bottom: 30, left: 60},
+	    width = 460 - margin.left - margin.right,
+	    height = 400 - margin.top - margin.bottom;
+
+	// append the svg object to the body of the page
+	var svg = d3.select("#scatterPlot")
+	  .append("svg")
+	    .attr("width", width + margin.left + margin.right)
+	    .attr("height", height + margin.top + margin.bottom)
+	  .append("g")
+	    .attr("transform",
+	          "translate(" + margin.left + "," + margin.top + ")");
+	d3.csv("scatterPlotData.csv", function(data){
+		 // Add X axis
+		  var x = d3.scaleLinear()
+		    .domain([0, d3.max(data, function(d){return d.meanTravelTimeTransit})])
+		    .range([ 0, width ]);
+		  svg.append("g")
+		    .attr("transform", "translate(0," + height + ")")
+		    .call(d3.axisBottom(x));
+
+		  // Add Y axis
+		  var y = d3.scaleLinear()
+		    .domain([0, d3.max(data, function(d){return d.commuttersTakingTransit/d.totalPeople})])
+		    .range([ height, 0]);
+		  svg.append("g")
+		    .call(d3.axisLeft(y));
+
+		  // Add dots
+		  svg.append('g')
+		    .selectAll("dot")
+		    .data(data)
+		    .enter()
+		    .append("circle")
+		      .attr("cx", function (d) { return x(d.meanTravelTimeTransit); } )
+		      //percent of people taking transit
+		      .attr("cy", function (d) { return y(d.commuttersTakingTransit/d.totalPeople); } ) 
+		      .attr("r", 3)
+		      .style("fill", "#69b3a2")
+		      .on("click", function() {console.log("clicked")})
+		  //add axis labels
+		  svg.append("text")             
+		      .attr("transform",
+		            "translate(" + (width/2) + " ," + 
+		                           (height + margin.top + 20) + ")")
+		      .style("text-anchor", "middle")
+		      .text("Mean Travel Time on Transit");
+		  svg.append("text")
+		      .attr("transform", "rotate(-90)")
+		      .attr("y", 0 - margin.left)
+		      .attr("x",0 - (height / 2))
+		      .attr("dy", "1em")
+		      .style("text-anchor", "middle")
+		      .text("Percent of People Taking Transit"); 
+	})
+
+
+  </script>
+</body>
+
+</html>
