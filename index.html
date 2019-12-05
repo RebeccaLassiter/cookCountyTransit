@@ -6,10 +6,12 @@
   <meta charset="utf-8">
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="https://d3js.org/colorbrewer.v1.min.js"></script>
+  <link rel="stylesheet" href="/src/build/styles.css">
 <!--    <link rel="stylesheet" type="text/css" href="languagesMap.css"> -->
 </head>
 
 <body>
+	<div id="idyll-mount"><div data-reactroot=""><div class="idyll-root"><div style="max-width:600px;margin:0 0 0 50px" class=" idyll-text-container"><h1>Commuting Habits in Cook County</h1><p>Mobility and transportation is an issue that impacts almost everyone, yet is not present in the public consciousness. Access to transportation is essential in order to maintain a job, sustain a social life, and fulfill basic human needs. In urban areas like Cook County, the issue of mobility becomes more complex when accounting for the high density of people that need to travel over large geographic areas. Most individuals move around using either cars or public transit. Owning a car can be cost prohibitive, especially in an area as expensive as Cook County. One of the best ways to ensure that all people can easily move throughout Chicagoland is by supporting and funding public transit systems. </p><p>Compared to the rest of the United States, Cook county has a very extensive public transit network, yet there is still great room for improvement. In particular, existing inequities regarding race and class can intersect and impact an individual’s access to affordable and efficient transportation. We can examine the areas that are best served by public transit, and those that are least served--while taking into account the demographics of these areas. </p>
   <div id="scatterPlot"></div>
 
   <script>
@@ -24,7 +26,7 @@
 	// append the svg object to the body of the page
 	var svg = d3.select("#scatterPlot")
 	  .append("svg")
-	    .attr("width", width + margin.left + margin.right)
+	    .attr("width", 600)//width + margin.left + margin.right)
 	    .attr("height", height + margin.top + margin.bottom)
 	  .append("g")
 	    .attr("transform",
