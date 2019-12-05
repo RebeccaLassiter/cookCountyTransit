@@ -18,7 +18,7 @@
 </div></div></div></div>
   <div style="margin:0 0 50px 50px" id="holder">
 	  <div id="scatterLegend"></div>
-	  <div id="scatterPlot"></div>
+	  <div id="scatterPlot" style="margin:0 0 25px 0px"></div>
 
 	  <div id="tractData"></div>
 
@@ -74,6 +74,9 @@
 		    	.attr("cy", function (d) { return y(d.commuttersTakingTransit/d.totalPeople); } ) 
 		    	.attr("r", 3)
 		    	.style("fill", function(d){return color(d.medianIncome)})//"#69b3a2")
+		    	.attr("opacity", function(d){if(d.meanTravelTimeTransit){
+		    									return 1; }
+		    								else{return 0;}})
 		    	.on("mouseover", function(d, i){
 		    						console.log(d.medianIncome)
 		    						console.log("color:", color(d.medianIncome))
@@ -142,13 +145,25 @@
 	function createTractData(d){
 		d3.selectAll("#tractData").remove();
 		d3.select("#holder").append("div") //.select("#tractData");
-		.attr("id", "tractData");
+					.attr("id", "tractData");
 
-		d3.selectAll("#tractData").append("text")
+		d3.selectAll("#tractData").append("p")
 		.text(d.niceName);
 
-		d3.select("#tractData").append("text")
-		.text("Median Income"+ d.medianIncome);
+		d3.select("#tractData").append("p")
+		.text("Median Income: $"+ d.medianIncome);
+
+		// var x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
+		// newDiv.append("g")
+		//     .attr("transform", "translate(0," + height + ")")
+		//     .call(d3.axisBottom(x));
+
+		// // Add Y axis
+		// var y = d3.scaleLinear()
+		//     .domain([0, d3.max(data, function(d){return d.commuttersTakingTransit/d.totalPeople})])
+		//     .range([ height, 0]);
+		// newDiv.append("g")
+		//     .call(d3.axisLeft(y));
 	}
 	
 
