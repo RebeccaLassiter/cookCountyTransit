@@ -5,6 +5,7 @@
   <title>Cook County Transit</title>
   <meta charset="utf-8">
   <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="https://d3js.org/colorbrewer.v1.min.js"></script>
 <!--    <link rel="stylesheet" type="text/css" href="languagesMap.css"> -->
 </head>
 
@@ -18,6 +19,8 @@
 	    width = 460 - margin.left - margin.right,
 	    height = 400 - margin.top - margin.bottom;
 
+	
+
 	// append the svg object to the body of the page
 	var svg = d3.select("#scatterPlot")
 	  .append("svg")
@@ -26,34 +29,50 @@
 	  .append("g")
 	    .attr("transform",
 	          "translate(" + margin.left + "," + margin.top + ")");
+
+	//loading data and making scatter plot
 	d3.csv("scatterPlotData.csv", function(data){
-		 // Add X axis
-		  var x = d3.scaleLinear()
-		    .domain([0, d3.max(data, function(d){return d.meanTravelTimeTransit})])
+		// Add X axis
+		var x = d3.scaleLinear()
+			.domain([0, d3.max(data, function(d){return d.meanTravelTimeTransit})])
 		    .range([ 0, width ]);
-		  svg.append("g")
+		svg.append("g")
 		    .attr("transform", "translate(0," + height + ")")
 		    .call(d3.axisBottom(x));
 
-		  // Add Y axis
-		  var y = d3.scaleLinear()
+		// Add Y axis
+		var y = d3.scaleLinear()
 		    .domain([0, d3.max(data, function(d){return d.commuttersTakingTransit/d.totalPeople})])
 		    .range([ height, 0]);
-		  svg.append("g")
+		svg.append("g")
 		    .call(d3.axisLeft(y));
 
+		var color = d3.scaleLinear()
+      		.range(["white", "green"]) 
+  			.domain([0, d3.max(data, function(d){return d.medianIncome})])
+
 		  // Add dots
-		  svg.append('g')
+		svg.append('g')
 		    .selectAll("dot")
 		    .data(data)
 		    .enter()
 		    .append("circle")
-		      .attr("cx", function (d) { return x(d.meanTravelTimeTransit); } )
-		      //percent of people taking transit
-		      .attr("cy", function (d) { return y(d.commuttersTakingTransit/d.totalPeople); } ) 
-		      .attr("r", 3)
-		      .style("fill", "#69b3a2")
-		      .on("click", function() {console.log("clicked")})
+		    	.attr("cx", function (d) { return x(d.meanTravelTimeTransit); } )
+		    	//percent of people taking transit
+		    	.attr("cy", function (d) { return y(d.commuttersTakingTransit/d.totalPeople); } ) 
+		    	.attr("r", 3)
+		    	.style("fill", function(d){return color(d.medianIncome)})//"#69b3a2")
+		    	.on("mouseover", function(d, i){
+		    						console.log(d.medianIncome)
+		    						console.log("color:", color(d.medianIncome))
+		    						d3.select(this).transition()
+					                	.duration('70')
+					                	.attr("r", 6);})
+		    	.on('mouseout', function (d, i) {
+							        d3.select(this).transition()
+							        	.duration('70')
+							        	.attr("r", 3);})
+		    	.on("click", function(d, i) {individualTract(d)})
 		  //add axis labels
 		  svg.append("text")             
 		      .attr("transform",
