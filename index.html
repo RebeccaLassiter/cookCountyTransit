@@ -37,7 +37,7 @@
 	var svg = d3.select("#scatterPlot")
 	  .append("svg")
 	    .attr("width", 600)//width + margin.left + margin.right)
-	    .attr("height", height + margin.top + margin.bottom)
+	    .attr("height", height + margin.top + margin.bottom +10)
 	  .append("g")
 	    .attr("transform",
 	          "translate(" + margin.left + "," + margin.top + ")");
@@ -94,7 +94,7 @@
 		            "translate(" + (width/2) + " ," + 
 		                           (height + margin.top + 20) + ")")
 		      .style("text-anchor", "middle")
-		      .text("Mean Travel Time on Transit");
+		      .text("Mean Travel Time Commuting By Transit (minutes)");
 		svg.append("text")
 		    .attr("transform", "rotate(-90)")
 		    .attr("y", 0 - margin.left)
@@ -146,25 +146,86 @@
 		d3.selectAll("#tractData").remove();
 		d3.select("#holder").append("div") //.select("#tractData");
 					.attr("id", "tractData");
+		//format data to race, percentage
+		data = []
+		data.push(["Black", d.blackPercentage])
+		data.push(["White", d.whitePercentage])
+		data.push(["American Indian", d.americanIndianPercentage])
+		data.push(["Asian", d.asianPercentage])
+		data.push(["Hispanic", d.hispanicPercentage])
+		data.push(["Native Hawaiian or Pacific Islander", d.nativePercentage])
+		data.push(["Two or More Races", d.twoOrMorePercentage])
+		data.push(["Other", d.otherPercentage])
+
+
+		width = 200
+		height = 200
+
 
 		d3.selectAll("#tractData").append("p")
 		.text(d.niceName);
-
+		percent = 100*(d.commuttersTakingTransit/d.totalPeople)
 		d3.select("#tractData").append("p")
 		.text("Median Income: $"+ d.medianIncome);
+		d3.select("#tractData").append("p")
+		.text("Mean Travel Time: "+ d.meanTravelTimeTransit + " minutes");
+		d3.select("#tractData").append("p")
+		.text("Percent of People Taking Transit to Work: "+ percent.toFixed(2) + "%");
 
-		// var x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
-		// newDiv.append("g")
-		//     .attr("transform", "translate(0," + height + ")")
-		//     .call(d3.axisBottom(x));
+		// set the ranges
+		var x = d3.scaleBand()
+		          .range([0, width])
+		          .padding(0.1);
+		var y = d3.scaleLinear()
+		          .range([height, 0]);
+		          
+		// append the svg object to the body of the page
+		// append a 'group' element to 'svg'
+		// moves the 'group' element to the top left margin
+		var svg = d3.select("#tractData").append("svg")
+		    .attr("width", width + margin.left + margin.right)
+		    .attr("height", height + 100 + margin.bottom)
+		    .attr("margin", 100)
+		  .append("g")
+		    .attr("transform", 
+		          "translate(" + margin.left + "," + margin.top + ")");
 
-		// // Add Y axis
-		// var y = d3.scaleLinear()
-		//     .domain([0, d3.max(data, function(d){return d.commuttersTakingTransit/d.totalPeople})])
-		//     .range([ height, 0]);
-		// newDiv.append("g")
-		//     .call(d3.axisLeft(y));
+
+		// Scale the range of the data in the domains
+		  x.domain(data.map(function(d) { console.log("d[0]",d[0]);return d[0]; }));
+		  y.domain([0, 100]);
+
+
+
+		  // append the rectangles for the bar chart
+		  svg.selectAll(".bar")
+		      .data(data)
+		    .enter().append("rect")
+		      .attr("class", "bar")
+		      .attr("x", function(d) { return x(d[0]); })
+		      .attr("width", x.bandwidth())
+		      .attr("y", function(d) { return y(d[1]); })
+		      .attr("height", function(d) { return height - y(d[1]); });
+
+		  // add the x Axis
+		  svg.append("g")
+		      .attr("transform", "translate(0," + height + ")")
+		      .call(d3.axisBottom(x));
+
+		
+		  svg.selectAll("text")
+		  	.attr("y", 0)
+		    .attr("x", 9)
+		    .attr("dy", ".35em")
+		    .attr("transform", "rotate(90)")
+		    .style("text-anchor", "start");
+
+		    // add the y Axis
+		  svg.append("g")
+		      .call(d3.axisLeft(y));
 	}
+
+
 	
 
 
