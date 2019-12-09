@@ -25,7 +25,6 @@
     </div>
 
   <script>
-  	console.log("scatterplot")
   	// set the dimensions and margins of the graph
 	var margin = {top: 10, right: 30, bottom: 30, left: 60},
 	    width = 460 - margin.left - margin.right,
@@ -78,8 +77,6 @@
 		    									return 1; }
 		    								else{return 0;}})
 		    	.on("mouseover", function(d, i){
-		    						console.log(d.medianIncome)
-		    						console.log("color:", color(d.medianIncome))
 		    						d3.select(this).transition()
 					                	.duration('70')
 					                	.attr("r", 6);})
@@ -157,9 +154,21 @@
 		data.push(["Two or More Races", d.twoOrMorePercentage])
 		data.push(["Other", d.otherPercentage])
 
+		console.log(d)
+		timeDate = []
+		timeDate.push(["12:00-4:59am", d.leaving1])
+		timeDate.push(["5:00-5:29am", d.leaving2])
+		timeDate.push(["5:30-5:59am", d.leaving3])
+		timeDate.push(["6:00-6:29am", d.leaving4])
+		timeDate.push(["6:30-6:59am", d.leaving5])
+		timeDate.push(["7:00-7:29am", d.leaving6])
+		timeDate.push(["7:30-7:59am", d.leaving7])
+		timeDate.push(["8:00-8:29am", d.leaving8])
+		timeDate.push(["8:30-8:59am", d.leaving9])
+		timeDate.push(["9:00am-11:59pm", d.leaving10])
 
-		width = 200
-		height = 200
+
+
 
 
 		d3.selectAll("#tractData").append("p")
@@ -172,6 +181,17 @@
 		d3.select("#tractData").append("p")
 		.text("Percent of People Taking Transit to Work: "+ percent.toFixed(2) + "%");
 
+
+		d3.selectAll("#tractData").append("div")
+			.attr("id", "tractGraphs");
+		raceGraph(data)
+		timeGraph(timeDate)
+		
+	}
+
+	function timeGraph(data){
+		width = 200
+		height = 200
 		// set the ranges
 		var x = d3.scaleBand()
 		          .range([0, width])
@@ -182,17 +202,18 @@
 		// append the svg object to the body of the page
 		// append a 'group' element to 'svg'
 		// moves the 'group' element to the top left margin
-		var svg = d3.select("#tractData").append("svg")
+		var svg = d3.select("#tractGraphs").append("svg")
 		    .attr("width", width + margin.left + margin.right)
 		    .attr("height", height + 100 + margin.bottom)
 		    .attr("margin", 100)
+		    .attr("float", "right")
 		  .append("g")
 		    .attr("transform", 
 		          "translate(" + margin.left + "," + margin.top + ")");
 
 
 		// Scale the range of the data in the domains
-		  x.domain(data.map(function(d) { console.log("d[0]",d[0]);return d[0]; }));
+		  x.domain(data.map(function(d) {return d[0]; }));
 		  y.domain([0, 100]);
 
 
@@ -223,6 +244,91 @@
 		    // add the y Axis
 		  svg.append("g")
 		      .call(d3.axisLeft(y));
+		  //add labels
+		  svg.append("text")             
+		      .attr("transform",
+		            "translate(" + (width/2) + " ," + 
+		                           (height + margin.top + 75) + ")")
+		      .style("text-anchor", "middle")
+		      .text("Time Leaving for Work");
+		svg.append("text")
+		    .attr("transform", "rotate(-90)")
+		    .attr("y", 0 - margin.left)
+		    .attr("x",0 - (height / 2))
+		    .attr("dy", "1em")
+		    .style("text-anchor", "middle")
+		    .text("Percent of Population"); 
+	}
+	function raceGraph(data){
+		width = 200
+		height = 200
+		// set the ranges
+		var x = d3.scaleBand()
+		          .range([0, width])
+		          .padding(0.1);
+		var y = d3.scaleLinear()
+		          .range([height, 0]);
+		          
+		// append the svg object to the body of the page
+		// append a 'group' element to 'svg'
+		// moves the 'group' element to the top left margin
+		var svg = d3.select("#tractGraphs").append("svg")
+		    .attr("width", width + margin.left + margin.right)
+		    .attr("height", height + 100 + margin.bottom)
+		    .attr("margin", 100)
+		    .attr("float", "left")
+		  .append("g")
+		    .attr("transform", 
+		          "translate(" + margin.left + "," + margin.top + ")");
+
+
+		// Scale the range of the data in the domains
+		  x.domain(data.map(function(d) {return d[0]; }));
+		  y.domain([0, 100]);
+
+
+
+		  // append the rectangles for the bar chart
+		  svg.selectAll(".bar")
+		      .data(data)
+		    .enter().append("rect")
+		      .attr("class", "bar")
+		      .attr("x", function(d) { return x(d[0]); })
+		      .attr("width", x.bandwidth())
+		      .attr("y", function(d) { return y(d[1]); })
+		      .attr("height", function(d) { return height - y(d[1]); });
+
+		  // add the x Axis
+		  svg.append("g")
+		      .attr("transform", "translate(0," + height + ")")
+		      .call(d3.axisBottom(x));
+
+		
+		  svg.selectAll("text")
+		  	.attr("y", 0)
+		    .attr("x", 9)
+		    .attr("dy", ".35em")
+		    .attr("transform", "rotate(90)")
+		    .style("text-anchor", "start");
+
+		    // add the y Axis
+		  svg.append("g")
+		      .call(d3.axisLeft(y));
+
+		  //add labels
+		  svg.append("text")             
+		      .attr("transform",
+		            "translate(" + (width/2) + " ," + 
+		                           (height + margin.top + 75) + ")")
+		      .style("text-anchor", "middle")
+		      .text("Race");
+		svg.append("text")
+		    .attr("transform", "rotate(-90)")
+		    .attr("y", 0 - margin.left)
+		    .attr("x",0 - (height / 2))
+		    .attr("dy", "1em")
+		    .style("text-anchor", "middle")
+		    .text("Percent of Population"); 
 	}
 
 
