@@ -11,39 +11,67 @@
 </head>
 
 <body>
-	<div id="idyll-mount"><div data-reactroot=""><div class="idyll-root"><div style="max-width:600px;margin:0 0 0 50px" class=" idyll-text-container"><h1>Commuting Habits in Cook County</h1><p>Mobility and transportation is an issue that impacts almost everyone, yet is not present in the public consciousness. Access to transportation is essential in order to maintain a job, sustain a social life, and fulfill basic human needs. In urban areas like Cook County, the issue of mobility becomes more complex when accounting for the high density of people that need to travel over large geographic areas. Most individuals move around using either cars or public transit. Owning a car can be cost prohibitive, especially in an area as expensive as Cook County. One of the best ways to ensure that all people can easily move throughout Chicagoland is by supporting and funding public transit systems. </p>
+	<div id="idyll-mount" style = "margin:0 0 -50px 0"><div data-reactroot=""><div class="idyll-root"><div style="max-width:600px;margin:0 0 0 50px" class=" idyll-text-container"><h1>Commuting Habits in Cook County</h1><p>Mobility and transportation is an issue that impacts almost everyone, yet is not present in the public consciousness. Access to transportation is essential in order to maintain a job, sustain a social life, and fulfill basic human needs. In urban areas like Cook County, the issue of mobility becomes more complex when accounting for the high density of people that need to travel over large geographic areas. Most individuals move around using either cars or public transit. Owning a car can be cost prohibitive, especially in an area as expensive as Cook County. One of the best ways to ensure that all people can easily move throughout Chicagoland is by supporting and funding public transit systems. </p>
 	<p>Compared to the rest of the United States, Cook county has a very extensive public transit network, yet there is still great room for improvement. In particular, existing inequities regarding race and class can intersect and impact an individual’s access to affordable and efficient transportation. We can examine the areas that are best served by public transit, and those that are least served--while taking into account the demographics of these areas. </p>
+
+	<h2> What does good transit service look like? </h2>
+	<p> Using data from the American Community Survey's table, <a href = https://data.census.gov/cedsci/table?q=S0802%3A%20MEANS%20OF%20TRANSPORTATION%20TO%20WORK%20BY%20SELECTED%20CHARACTERISTICS&g=&hidePreview=true&table=S0802&tid=ACSST1Y2018.S0802&lastDisplayedRow=116>"means of transporting to work,"</a> we can use a few metrics to qualify whether an area is well-served by its public transit system. For simplicity's sake, we can say that an area is well-served if there is a high number of people taking transit, and the average commute time by transit is relatively short. This of course leaves quite a few factors out, such as safety, accessibility, cost, cleanliness, and geographic proximity to work and home. </p>
+	<h2> What are the impacts of poor transit service and long commutes? </h2>
+	<p> From an intuitive standpoint, we can see that a longer commute results in less personal-time for an individual. This could often result in less time spent with family, friends, or on personal hobbies. <a href = https://link.springer.com/article/10.1007/s11205-012-0003-2> Research </a> also shows that long commutes may be linked to decreased levels of happiness.</p>
+
+	<h2> How does Cook county's current and historic segregation impact transit service?</h2>
+	<p> Chicago and Cook county have a long history of <a href = https://www.theatlantic.com/business/archive/2018/03/chicago-segregation-poverty/556649/> institutionalized segregation, housing discrimination, and redlining. </a> This often manifests itself in the way our transit systems are constructed. See Census Tract 8326 found in the Lincoln Park neighborhood in Chicago. 
+		<div id = "example1"> 
+			<img src="src/tract8326.png"/>
+		</div> 
+	Compare to census tract 2520, found in Chicago's Austin neighborhood
+		<div id = "example2"> 
+			<img src="src/tract2520.png"/>
+		</div>
+    </p>
+
 	<p>Select different tracts below to view more details!</p>
 	<h2> Census Tracts Characterized by Public Transit</h2>
 </div></div></div></div>
-  <div style="margin:0 0 50px 50px" id="holder">
+  <div style="margin:50px 0 50px 50px" id="holder">
 	  <div id="scatterLegend"></div>
-	  <div id="scatterPlot" style="margin:0 0 25px 0px"></div>
+	  <div id="scatterPlot" style="margin:-75px 0 25px 0px" class=" idyll-text-container"></div>
 
 	  <div id="tractData"></div>
 
     </div>
 
   <script>
+
   	// set the dimensions and margins of the graph
 	var margin = {top: 10, right: 30, bottom: 30, left: 60},
-	    width = 460 - margin.left - margin.right,
-	    height = 400 - margin.top - margin.bottom;
+	    width = 460 //- margin.left - margin.right,
+	    height = 400 //- margin.top - margin.bottom;
 
 	
 
 	// append the svg object to the body of the page
 	var svg = d3.select("#scatterPlot")
 	  .append("svg")
-	    .attr("width", 600)//width + margin.left + margin.right)
+	    .attr("width", width + margin.left + margin.right +100)
 	    .attr("height", height + margin.top + margin.bottom +10)
 	  .append("g")
+	  	.attr("width", width + margin.left + margin.right +100)
+	    .attr("height", height + margin.top + margin.bottom +10)
 	    .attr("transform",
 	          "translate(" + margin.left + "," + margin.top + ")");
 
 	//loading data and making scatter plot
 	d3.csv("scatterPlotData.csv", function(data){
-		// Add X axis
+
+		data.forEach(function(row){
+			if(row["niceName"] == "Census Tract 2520, Cook County, Illinois"){
+				//example1(row);
+			}
+			else if(row["niceName"] == "Census Tract 8326, Cook County, Illinois"){
+				//example1(row);
+			}
+		});
 		var x = d3.scaleLinear()
 			.domain([0, d3.max(data, function(d){return d.meanTravelTimeTransit})])
 		    .range([ 0, width ]);
@@ -88,10 +116,10 @@
 		//add axis labels
 		svg.append("text")             
 		      .attr("transform",
-		            "translate(" + (width/2) + " ," + 
+		            "translate(" + ((width/2) + 0) + " ," + 
 		                           (height + margin.top + 20) + ")")
 		      .style("text-anchor", "middle")
-		      .text("Mean Travel Time Commuting By Transit (minutes)");
+		      .text("Mean Time Commuting By Transit (minutes)");
 		svg.append("text")
 		    .attr("transform", "rotate(-90)")
 		    .attr("y", 0 - margin.left)
@@ -139,6 +167,57 @@
 	})
 
 
+	function example1(d){
+		//format data to race, percentage
+		data = []
+		data.push(["Black", d.blackPercentage])
+		data.push(["White", d.whitePercentage])
+		data.push(["American Indian", d.americanIndianPercentage])
+		data.push(["Asian", d.asianPercentage])
+		data.push(["Hispanic", d.hispanicPercentage])
+		data.push(["Native Hawaiian or Pacific Islander", d.nativePercentage])
+		data.push(["Two or More Races", d.twoOrMorePercentage])
+		data.push(["Other", d.otherPercentage])
+
+		console.log(d)
+		timeDate = []
+		timeDate.push(["12:00-4:59am", d.leaving1])
+		timeDate.push(["5:00-5:29am", d.leaving2])
+		timeDate.push(["5:30-5:59am", d.leaving3])
+		timeDate.push(["6:00-6:29am", d.leaving4])
+		timeDate.push(["6:30-6:59am", d.leaving5])
+		timeDate.push(["7:00-7:29am", d.leaving6])
+		timeDate.push(["7:30-7:59am", d.leaving7])
+		timeDate.push(["8:00-8:29am", d.leaving8])
+		timeDate.push(["8:30-8:59am", d.leaving9])
+		timeDate.push(["9:00am-11:59pm", d.leaving10])
+
+
+		d3.selectAll("#example1")
+			.attr("class", "idyll-text-container")
+			.attr("border-style", "solid")
+			.attr("border-color", "grey");
+
+
+		d3.selectAll("#example1").append("h3")
+		.text(d.niceName);
+		percent = 100*(d.commuttersTakingTransit/d.totalPeople)
+		d3.select("#example1").append("p")
+		.text("Median Income: $"+ d.medianIncome);
+		d3.select("#example1").append("p")
+		.text("Mean Travel Time: "+ d.meanTravelTimeTransit + " minutes");
+		d3.select("#example1").append("p")
+		.text("Percent of People Taking Transit to Work: "+ percent.toFixed(2) + "%");
+
+
+		d3.selectAll("#example1").append("div")
+			.attr("id", "tractGraphs");
+		raceGraph(data, "#example1")
+		timeGraph(timeDate, "#example1")
+	}
+
+	
+
 	function createTractData(d){
 		d3.selectAll("#tractData").remove();
 		d3.select("#holder").append("div") //.select("#tractData");
@@ -168,10 +247,13 @@
 		timeDate.push(["9:00am-11:59pm", d.leaving10])
 
 
+		d3.selectAll("#tractData")
+			.attr("class", "idyll-text-container")
+			.attr("border-style", "solid")
+			.attr("border-color", "grey");
 
 
-
-		d3.selectAll("#tractData").append("p")
+		d3.selectAll("#tractData").append("h3")
 		.text(d.niceName);
 		percent = 100*(d.commuttersTakingTransit/d.totalPeople)
 		d3.select("#tractData").append("p")
@@ -184,17 +266,17 @@
 
 		d3.selectAll("#tractData").append("div")
 			.attr("id", "tractGraphs");
-		raceGraph(data)
-		timeGraph(timeDate)
+		raceGraph(data, "#tractData")
+		timeGraph(timeDate, "#tractData")
 		
 	}
 
-	function timeGraph(data){
-		width = 200
+	function timeGraph(data, id){
+		twidth = 200
 		height = 200
 		// set the ranges
 		var x = d3.scaleBand()
-		          .range([0, width])
+		          .range([0, twidth])
 		          .padding(0.1);
 		var y = d3.scaleLinear()
 		          .range([height, 0]);
@@ -202,8 +284,8 @@
 		// append the svg object to the body of the page
 		// append a 'group' element to 'svg'
 		// moves the 'group' element to the top left margin
-		var svg = d3.select("#tractGraphs").append("svg")
-		    .attr("width", width + margin.left + margin.right)
+		var svg = d3.select(id).append("svg")
+		    .attr("width", twidth + margin.left + margin.right)
 		    .attr("height", height + 100 + margin.bottom)
 		    .attr("margin", 100)
 		    .attr("float", "right")
@@ -247,7 +329,7 @@
 		  //add labels
 		  svg.append("text")             
 		      .attr("transform",
-		            "translate(" + (width/2) + " ," + 
+		            "translate(" + (twidth/2) + " ," + 
 		                           (height + margin.top + 75) + ")")
 		      .style("text-anchor", "middle")
 		      .text("Time Leaving for Work");
@@ -259,7 +341,7 @@
 		    .style("text-anchor", "middle")
 		    .text("Percent of Population"); 
 	}
-	function raceGraph(data){
+	function raceGraph(data, id){
 		width = 200
 		height = 200
 		// set the ranges
@@ -272,7 +354,7 @@
 		// append the svg object to the body of the page
 		// append a 'group' element to 'svg'
 		// moves the 'group' element to the top left margin
-		var svg = d3.select("#tractGraphs").append("svg")
+		var svg = d3.select(id).append("svg")
 		    .attr("width", width + margin.left + margin.right)
 		    .attr("height", height + 100 + margin.bottom)
 		    .attr("margin", 100)
